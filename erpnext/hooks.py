@@ -270,5 +270,5 @@ regional_overrides = {
 	}
 }
 
-fixtures = [{"dt":"Custom Field", "filters": [["dt", "like", "%"]]},
-			{"dt":"Custom Script", "filters": [["dt", "like", "%"]]}]
+# fixtures = [{"dt":"Custom Field", "filters": [["dt", "like", "%"]]},
+# 			{"dt":"Custom Script", "filters": [["dt", "like", "%"]]}]

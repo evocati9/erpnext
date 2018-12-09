@@ -97,6 +97,11 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 				me.set_in_company_currency(item, ["price_list_rate", "rate", "amount", "net_rate", "net_amount"]);
 			});
 		}
+
+		//interra
+		$.each(this.frm.doc["empties_only"] || [], function(i, item) {
+			item.amount = flt(item.rate * item.quantity, precision("amount", item)) || 0;
+		});
 	},
 
 	set_in_company_currency: function(doc, fields) {
@@ -200,17 +205,31 @@ erpnext.taxes_and_totals = erpnext.payments.extend({
 
 	calculate_net_total: function() {
 		var me = this;
+		//interra
+		this.frm.doc.total_amount = this.frm.doc.total_amount1 = 0.0;
+		this.frm.doc.total_qty = this.frm.doc.total_qty1 = 0.0;
 		this.frm.doc.total = this.frm.doc.base_total = this.frm.doc.net_total = this.frm.doc.base_net_total = 0.0;
 
 		$.each(this.frm.doc["items"] || [], function(i, item) {
+			me.frm.doc.total_qty += item.qty;
+			me.frm.doc.total_amount += item.amount;
 			me.frm.doc.total += item.amount;
 			me.frm.doc.base_total += item.base_amount;
 			me.frm.doc.net_total += item.net_amount;
 			me.frm.doc.base_net_total += item.base_net_amount;
 			});
 
+		$.each(this.frm.doc["empties_only"] || [], function(i, item) {
+			me.frm.doc.total_qty1 += item.quantity || 0;
+			me.frm.doc.total_amount1 += item.amount;
+			me.frm.doc.total += item.amount;
+			me.frm.doc.base_total += item.amount;
+			me.frm.doc.net_total += item.amount;
+			me.frm.doc.base_net_total += item.amount;
+			});
 
 		frappe.model.round_floats_in(this.frm.doc, ["total", "base_total", "net_total", "base_net_total"]);
+
 	},
 
 	calculate_taxes: function() {
