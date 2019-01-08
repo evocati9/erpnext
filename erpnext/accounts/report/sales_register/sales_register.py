@@ -37,7 +37,7 @@ def _execute(filters, additional_table_columns=None, additional_query_columns=No
 		warehouse = list(set(invoice_cc_wh_map.get(inv.name, {}).get("warehouse", [])))
 
 		row = [
-			inv.name, inv.posting_date, inv.customer, inv.customer_name
+			inv.name, inv.posting_date, inv.customer, inv.customer_name, inv.total_qty
 		]
 
 		if additional_query_columns:
@@ -81,7 +81,7 @@ def get_columns(invoice_list, additional_table_columns):
 	columns = [
 		_("Invoice") + ":Link/Sales Invoice:120", _("Posting Date") + ":Date:80",
 		_("Customer") + ":Link/Customer:120", _("Customer Name") + "::120",
-		 _("Quantity") + "::100"
+		_("Quantity") + "::100"
 	]
 
 	if additional_table_columns:
@@ -156,7 +156,8 @@ def get_invoices(filters, additional_query_columns):
 	return frappe.db.sql("""
 		select name, posting_date, debit_to, project, customer, 
 		customer_name, owner, remarks, territory, tax_id, customer_group,
-		base_net_total, base_grand_total, base_rounded_total, outstanding_amount {0}
+		base_net_total, base_grand_total, (select sum(`tabSales Invoice Item`.qty)
+		from `tabSales Invoice Item` where `tabSales Invoice Item`.parent = `tabSales Invoice`.name) as total_qty, base_rounded_total, outstanding_amount {0}
 		from `tabSales Invoice`
 		where docstatus = 1 %s order by posting_date desc, name desc""".format(additional_query_columns or '') %
 		conditions, filters, as_dict=1)
