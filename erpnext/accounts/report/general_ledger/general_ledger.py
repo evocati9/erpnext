@@ -102,8 +102,7 @@ def get_gl_entries(filters):
 		select
 			posting_date, account, party_type, party,
 			sum(debit) as debit, sum(credit) as credit,
-			voucher_type, voucher_no, cost_center, project,
-			against_voucher_type, against_voucher,
+			against_voucher_type,
 			remarks, against, is_opening {select_fields}
 		from `tabGL Entry`
 		where company=%(company)s {conditions}
@@ -254,7 +253,6 @@ def get_result_as_list(data, filters):
 			d['balance_in_account_currency'] = d.get('balance')
 
 		d['account_currency'] = filters.account_currency
-		d['bill_no'] = inv_details.get(d.get('against_voucher'), '')
 
 	return data
 
@@ -330,18 +328,6 @@ def get_columns(filters):
 
 	columns.extend([
 		{
-			"label": _("Voucher Type"),
-			"fieldname": "voucher_type",
-			"width": 120
-		},
-		{
-			"label": _("Voucher No"),
-			"fieldname": "voucher_no",
-			"fieldtype": "Dynamic Link",
-			"options": "voucher_type",
-			"width": 180
-		},
-		{
 			"label": _("Against Account"),
 			"fieldname": "against",
 			"width": 120
@@ -357,33 +343,8 @@ def get_columns(filters):
 			"width": 100
 		},
 		{
-			"label": _("Project"),
-			"options": "Project",
-			"fieldname": "project",
-			"width": 100
-		},
-		{
-			"label": _("Cost Center"),
-			"options": "Cost Center",
-			"fieldname": "cost_center",
-			"width": 100
-		},
-		{
 			"label": _("Against Voucher Type"),
 			"fieldname": "against_voucher_type",
-			"width": 100
-		},
-		{
-			"label": _("Against Voucher"),
-			"fieldname": "against_voucher",
-			"fieldtype": "Dynamic Link",
-			"options": "against_voucher_type",
-			"width": 100
-		},
-		{
-			"label": _("Supplier Invoice No"),
-			"fieldname": "bill_no",
-			"fieldtype": "Data",
 			"width": 100
 		},
 		{
